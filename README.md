@@ -1,2 +1,2 @@
-# RBF-NN
-Implementation of Radial Basis Function (RBF) Neural Network in java.
+# RBF-Neural-Network
+Implementation of Radial Basis Function (RBF) Neural Network, with moving centers, in java.
