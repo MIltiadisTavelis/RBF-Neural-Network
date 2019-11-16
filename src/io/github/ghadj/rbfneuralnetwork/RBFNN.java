@@ -7,9 +7,8 @@ import java.util.Random;
 import java.util.Map.Entry;
 
 public class RBFNN {
-    private double biasWeight;
+    private List<Double> bias = new ArrayList<>();
     private List<Centre> centres = new ArrayList<>();
-    private int numInputNeurons;
     private int numOutputNeurons;
     private double learningRateCenter;
     private double learningRateSigma;
@@ -20,11 +19,12 @@ public class RBFNN {
 
     public RBFNN(int numHiddenLayerNeurons, int numInputNeurons, int numOutputNeurons, double learningRate,
             double sigma, int maxIterations, List<List<Double>> centreVectors) {
-        this.biasWeight = (new Random()).nextDouble() * 2 - 1; // [-1, 1]
-        for (int i = 0; i < numHiddenLayerNeurons; i++) {
+        // initialize bias weights to the output neurons
+        for (int i = 0; i < numOutputNeurons; i++)
+            bias.add((new Random()).nextDouble() * 2 - 1); // [-1, 1]
+        for (int i = 0; i < numHiddenLayerNeurons; i++)
             this.centres.add(new Centre(centreVectors.get(i), sigma, numOutputNeurons));
-        }
-        this.numInputNeurons = numInputNeurons;
+
         this.numOutputNeurons = numOutputNeurons;
         this.learningRateCenter = learningRate;
         this.learningRateSigma = learningRate;
@@ -46,7 +46,7 @@ public class RBFNN {
             errors = new ArrayList<>();
 
             for (int outputNeuron = 0; outputNeuron < numOutputNeurons; outputNeuron++) {
-                double actual = this.biasWeight;
+                double actual = this.bias.get(outputNeuron);
                 for (Centre c : centres) {
                     actual += c.getWeights().get(outputNeuron) * c.gaussianFunction(e.getKey());
                 }
@@ -59,10 +59,11 @@ public class RBFNN {
 
             if (training)
                 for (Centre c : centres) {
-                    c.updateCoordinates(errors);
-                    c.updateStandardDeviation(errors);
-                    c.updateWeights(errors);
+                    c.updateCoordinates(errors, learningRateCenter);
+                    c.updateSigma(errors, learningRateSigma);
+                    c.updateWeights(errors, learningRateWeight);
                 }
+            this.updateBias(errors);
         }
         if (training)
             trainErrorList.add(0.5 * sumError);
@@ -70,8 +71,9 @@ public class RBFNN {
             testErrorList.add(0.5 * sumError);
     }
 
-    public double getOutput() {
-        return 0.0;
+    private void updateBias(List<Double> errors) {
+        for (Double b : bias)
+            b = b + learningRateWeight * errors.get(bias.indexOf(b));
     }
 
     public List<Double> getWeights() {

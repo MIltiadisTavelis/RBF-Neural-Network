@@ -26,15 +26,15 @@ public class Centre {
         return 0.0;
     }
 
-    public void updateCoordinates(List<Double> errors) {
+    public void updateCoordinates(List<Double> errors, double learningRate) {
 
     }
 
-    public void updateStandardDeviation(List<Double> errors) {
+    public void updateSigma(List<Double> errors, double learningRate) {
 
     }
 
-    public void updateWeights(List<Double> errors) {
+    public void updateWeights(List<Double> errors, double learningRate) {
 
     }
 
