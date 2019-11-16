@@ -39,7 +39,6 @@ import java.util.Map;
 public class RBFNNDriver {
     private static final String errorFilename = "errors.txt";
     private static final String weightsFilename = "weights.txt";
-    private static final int dataDimension = 53; // dimensions of the input data
 
     /**
      * Reads the parameters of the neural network from the given file.
@@ -79,7 +78,7 @@ public class RBFNNDriver {
      * @throws InvalidParameterException in case the data of the given file is
      *                                   inconsistent.
      */
-    public static Map<List<Double>, Double> readData(String filename)
+    public static Map<List<Double>, Double> readData(String filename, int numInputNeurons, int numOutputNeurons)
             throws FileNotFoundException, IOException, InvalidParameterException {
         Map<List<Double>, Double> data = new HashMap<List<Double>, Double>();
         File file = new File(filename);
@@ -89,7 +88,7 @@ public class RBFNNDriver {
         while ((st = br.readLine()) != null) {
             String[] line = st.split(",");
             // molecule name + biological activity + molecule characteristics
-            if (line.length != 1 + 1 + dataDimension) {
+            if (line.length != 1 + numOutputNeurons + numInputNeurons) {
                 br.close();
                 throw new InvalidParameterException("Inconsistent data given in file " + filename);
             }
@@ -98,7 +97,7 @@ public class RBFNNDriver {
             int i = 1;
             // int i = 0; String moleculeName = line[i++];
             double output = Double.parseDouble(line[i++]);
-            for (int j = 0; j < dataDimension; j++)
+            for (int j = 0; j < numInputNeurons; j++)
                 input.add(Double.parseDouble(line[i++]));
 
             data.put(input, output);
@@ -107,7 +106,7 @@ public class RBFNNDriver {
         return data;
     }
 
-    public static List<List<Double>> readCentreVectors(String filename)
+    public static List<List<Double>> readCentreVectors(String filename, int numInputNeurons)
             throws FileNotFoundException, IOException, InvalidParameterException {
         File file = new File(filename);
         BufferedReader br;
@@ -117,13 +116,13 @@ public class RBFNNDriver {
         while ((st = br.readLine()) != null) {
             String[] line = st.split(",");
 
-            if (line.length != dataDimension) {
+            if (line.length != numInputNeurons) {
                 br.close();
                 throw new InvalidParameterException("Inconsistent data given in file " + filename);
             }
 
             List<Double> centre = new ArrayList<>();
-            for (int j = 0; j < dataDimension; j++)
+            for (int j = 0; j < numInputNeurons; j++)
                 centre.add(Double.parseDouble(line[j]));
 
             centres.add(centre);
@@ -198,9 +197,9 @@ public class RBFNNDriver {
         String[] parameters;
         try {
             parameters = readParameters(args[0]);
-            centreVectors = readCentreVectors(parameters[6]);
-            trainingData = readData(parameters[7]);
-            testData = readData(parameters[8]);
+            centreVectors = readCentreVectors(parameters[6], Integer.parseInt(parameters[1]));
+            trainingData = readData(parameters[7], Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
+            testData = readData(parameters[8], Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]));
 
             run(parameters, centreVectors, trainingData, testData);
         } catch (InvalidParameterException e) {

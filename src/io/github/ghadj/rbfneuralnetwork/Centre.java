@@ -1,44 +1,52 @@
 package io.github.ghadj.rbfneuralnetwork;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 public class Centre {
     private List<Double> coordinates;
+    private List<Double> weights = new ArrayList<>();
+    private double output; // gaussian function
     private double sigma; // standard deviation
-    private double weight;
 
-    public Centre(List<Double> coordinates, double sigma){
+    public Centre(List<Double> coordinates, double sigma, int numOutputNeurons) {
         this.coordinates = coordinates;
         this.sigma = sigma;
-        this.weight = (new Random()).nextDouble() * 2 - 1; // [-1, 1]
+        for (int i = 0; i < numOutputNeurons; i++)
+            weights.add((new Random()).nextDouble() * 2 - 1); // [-1, 1]
     }
 
-    public double gaussianFunction(){
+    public double gaussianFunction(List<Double> pattern) {
+        output = 0.0;
         return 0.0;
     }
 
-    public double euclideanDistance(){
+    public double euclideanDistance() {
         return 0.0;
     }
 
-    public void updateCoordinates(){
+    public void updateCoordinates(List<Double> errors) {
 
     }
 
-    public void updateStandardDeviation(){
-        
+    public void updateStandardDeviation(List<Double> errors) {
+
     }
 
-    public double getWeight(){
-        return weight;
+    public void updateWeights(List<Double> errors) {
+
     }
 
-    public List<Double> getCoordinates(){
+    public List<Double> getCoordinates() {
         return coordinates;
     }
 
-    public double getSigma(){
+    public double getSigma() {
         return sigma;
+    }
+
+    public List<Double> getWeights() {
+        return weights;
     }
 }
