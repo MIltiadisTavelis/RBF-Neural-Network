@@ -180,7 +180,7 @@ public class RBFNNDriver {
      * @param filename.
      * @throws IOException
      */
-    public static void writeWeights(List<Double> weights, String filename) throws IOException {
+    public static void writeWeights(List<List<Double>> weights, String filename) throws IOException {
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "utf-8"));
         StringBuilder str = new StringBuilder();
 

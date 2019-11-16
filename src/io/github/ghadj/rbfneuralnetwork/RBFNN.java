@@ -22,6 +22,7 @@ public class RBFNN {
         // initialize bias weights to the output neurons
         for (int i = 0; i < numOutputNeurons; i++)
             bias.add((new Random()).nextDouble() * 2 - 1); // [-1, 1]
+
         for (int i = 0; i < numHiddenLayerNeurons; i++)
             this.centres.add(new Centre(centreVectors.get(i), sigma, numOutputNeurons));
 
@@ -59,8 +60,8 @@ public class RBFNN {
 
             if (training)
                 for (Centre c : centres) {
-                    c.updateCoordinates(errors, learningRateCenter);
-                    c.updateSigma(errors, learningRateSigma);
+                    c.updateCoordinates(e.getKey(), errors, learningRateCenter);
+                    c.updateSigma(e.getKey(), errors, learningRateSigma);
                     c.updateWeights(errors, learningRateWeight);
                 }
             this.updateBias(errors);

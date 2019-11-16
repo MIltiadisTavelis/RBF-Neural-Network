@@ -18,24 +18,37 @@ public class Centre {
     }
 
     public double gaussianFunction(List<Double> pattern) {
-        output = 0.0;
-        return 0.0;
+        output = Math.exp((-1) * euclideanDistance(pattern, coordinates) / (2 * Math.pow(sigma, 2)));
+        return output;
     }
 
-    public double euclideanDistance() {
-        return 0.0;
+    private double euclideanDistance(List<Double> x, List<Double> y) {
+        double sum = 0.0;
+        for (int i = 0; i < x.size() && i < y.size(); i++)
+            sum += Math.pow(x.get(i) - y.get(i), 2);
+        return sum;
     }
 
-    public void updateCoordinates(List<Double> errors, double learningRate) {
-
+    public void updateCoordinates(List<Double> x, List<Double> errors, double learningRate) {
+        double sum = 0.0;
+        for (int i = 0; i < errors.size() && i < weights.size(); i++)
+            sum += errors.get(i) * weights.get(i) * output;
+        for (Double c : this.coordinates) {
+            c = c + learningRate * sum * (x.get(coordinates.indexOf(c)) - c) / Math.pow(sigma, 2);
+        }
     }
 
-    public void updateSigma(List<Double> errors, double learningRate) {
-
+    public void updateSigma(List<Double> x, List<Double> errors, double learningRate) {
+        double sum = 0.0;
+        for (int i = 0; i < errors.size() && i < weights.size(); i++)
+            sum += errors.get(i) * weights.get(i) * output;
+        this.sigma = this.sigma
+                + learningRate * sum * (euclideanDistance(x, this.coordinates) / Math.pow(this.sigma, 3));
     }
 
     public void updateWeights(List<Double> errors, double learningRate) {
-
+        for (Double w : this.weights)
+            w = w + learningRate * errors.get(this.weights.indexOf(w)) * output;
     }
 
     public List<Double> getCoordinates() {
