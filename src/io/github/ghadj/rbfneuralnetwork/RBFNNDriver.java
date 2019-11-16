@@ -18,25 +18,20 @@ import java.util.Map;
 /**
  * Driver of the neural network. Takes as input from the arguments the path to
  * the file, containing the parameters of the neural network. Traings the neural
- * network based on the given parameters and exports the error per epoch and 
+ * network based on the given parameters and exports the error per epoch and
  * clustering.
  * 
- * Assume that the parameter file has the following format: 
- * numHiddenLayerNeurons (???)
- * numInputNeurons (???)
- * numOutputNeurons 1
- * learningRate (???)
- * sigmas (???)
- * maxIterations (???) 
- * centresFile ../Parameters/centreVectors.txt
- * trainFile ../Parameters/training.csv 
- * testFile ../Parameters/test.csv
+ * Assume that the parameter file has the following format:
+ * numHiddenLayerNeurons (???) numInputNeurons (???) numOutputNeurons 1
+ * learningRate (???) sigmas (???) maxIterations (???) centresFile
+ * ../Parameters/centreVectors.txt trainFile ../Parameters/training.csv testFile
+ * ../Parameters/test.csv
  * 
- * Compile from RBF-Neural-Network/ directory 
- * javac -d ./bin ./src/io/github/ghadj/rbfneuralnetwork/*.java
+ * Compile from RBF-Neural-Network/ directory javac -d ./bin
+ * ./src/io/github/ghadj/rbfneuralnetwork/*.java
  * 
- * Run from RBF-Neural-Network/ directory 
- * java -cp ./bin io.github.ghadj.rbfneuralnetwork.RBFNNDriver <path to parameters.txt>
+ * Run from RBF-Neural-Network/ directory java -cp ./bin
+ * io.github.ghadj.rbfneuralnetwork.RBFNNDriver <path to parameters.txt>
  * 
  * @author Georgios Hadjiantonis
  * @since 15-11-2019
@@ -77,7 +72,7 @@ public class RBFNNDriver {
      * Reads data from the given file. Returns a map in the form of <input list,
      * output list>.
      * 
-     * @param filename         name of file to be read.
+     * @param filename name of file to be read.
      * @return a map in the form of <input list, output list>.
      * @throws FileNotFoundException
      * @throws IOException
@@ -92,18 +87,17 @@ public class RBFNNDriver {
         br = new BufferedReader(new FileReader(file));
         String st;
         while ((st = br.readLine()) != null) {
-            List<Double> input = new ArrayList<>();
-            double output;
-            int i = 0;
             String[] line = st.split(",");
             // molecule name + biological activity + molecule characteristics
-            if (line.length != 1 + 1 + dataDimension) { 
+            if (line.length != 1 + 1 + dataDimension) {
                 br.close();
                 throw new InvalidParameterException("Inconsistent data given in file " + filename);
             }
 
-            String moleculeName = line[i++];
-            output = Double.parseDouble(line[i++]);
+            List<Double> input = new ArrayList<>();
+            int i = 1;
+            // int i = 0; String moleculeName = line[i++];
+            double output = Double.parseDouble(line[i++]);
             for (int j = 0; j < dataDimension; j++)
                 input.add(Double.parseDouble(line[i++]));
 
@@ -113,31 +107,59 @@ public class RBFNNDriver {
         return data;
     }
 
+    public static List<List<Double>> readCentreVectors(String filename)
+            throws FileNotFoundException, IOException, InvalidParameterException {
+        File file = new File(filename);
+        BufferedReader br;
+        br = new BufferedReader(new FileReader(file));
+        String st;
+        List<List<Double>> centres = new ArrayList<>();
+        while ((st = br.readLine()) != null) {
+            String[] line = st.split(",");
+
+            if (line.length != dataDimension) {
+                br.close();
+                throw new InvalidParameterException("Inconsistent data given in file " + filename);
+            }
+
+            List<Double> centre = new ArrayList<>();
+            for (int j = 0; j < dataDimension; j++)
+                centre.add(Double.parseDouble(line[j]));
+
+            centres.add(centre);
+        }
+        br.close();
+        return centres;
+    }
+
     /**
      * Runs the NN based on the parameters, training and testing given data. Writes
      * the square error and clusters(labels per neuron) generated to two separate
      * files at the end of all the iterations.
      * 
-     * @param parameters    array containing the given parameters.
-     * @param trainingData  training data.
-     * @param testData      test data.
+     * @param parameters   array containing the given parameters.
+     * @param trainingData training data.
+     * @param testData     test data.
      * @throws IOException
      */
-    public static void run(String[] parameters, Map<List<Double>, Double> trainingData,
-            Map<List<Double>, Double> testData) throws IOException {
+    public static void run(String[] parameters, List<List<Double>> centreVectors,
+            Map<List<Double>, Double> trainingData, Map<List<Double>, Double> testData) throws IOException {
 
-        RBFNN nn = new RBFNN(Integer.parseInt(parameters[0]), Integer.parseInt(parameters[1]), Integer.parseInt(parameters[2]),  Double.parseDouble(parameters[3]), Double.parseDouble(parameters[4]),Integer.parseInt(parameters[5]));
+        RBFNN nn = new RBFNN(Integer.parseInt(parameters[0]), Integer.parseInt(parameters[1]),
+                Integer.parseInt(parameters[2]), Double.parseDouble(parameters[3]), Double.parseDouble(parameters[4]),
+                Integer.parseInt(parameters[5]), centreVectors);
         nn.run(trainingData, testData);
         List<Double> trainError = nn.getTrainErrorList();
         List<Double> testError = nn.getTestErrorList();
         writeResults(trainError, testError, errorFilename);
+        writeWeights(nn.getWeights(), weightsFilename);
     }
 
     /**
      * Writes the results in csv format to the file given.
      * 
-     * @param trainResults  training squared error.
-     * @param testResults   test squared error.
+     * @param trainResults training squared error.
+     * @param testResults  test squared error.
      * @param filename.
      * @throws IOException
      */
@@ -154,7 +176,7 @@ public class RBFNNDriver {
     /**
      * Writes the weights of the centres to the filename given.
      * 
-     * @param weights array containing the corresponding weight per centre.
+     * @param weights   array containing the corresponding weight per centre.
      * @param filename.
      * @throws IOException
      */
@@ -172,13 +194,15 @@ public class RBFNNDriver {
             return;
         }
         Map<List<Double>, Double> trainingData, testData;
+        List<List<Double>> centreVectors;
         String[] parameters;
         try {
             parameters = readParameters(args[0]);
+            centreVectors = readCentreVectors(parameters[6]);
             trainingData = readData(parameters[7]);
             testData = readData(parameters[8]);
 
-            run(parameters, trainingData, testData);
+            run(parameters, centreVectors, trainingData, testData);
         } catch (InvalidParameterException e) {
             System.out.println("Error: " + e.getMessage());
         } catch (FileNotFoundException e) {
