@@ -78,9 +78,9 @@ public class RBFNNDriver {
      * @throws InvalidParameterException in case the data of the given file is
      *                                   inconsistent.
      */
-    public static Map<List<Double>, Double> readData(String filename, int numInputNeurons, int numOutputNeurons)
+    public static Map<List<Double>, List<Double>> readData(String filename, int numInputNeurons, int numOutputNeurons)
             throws FileNotFoundException, IOException, InvalidParameterException {
-        Map<List<Double>, Double> data = new HashMap<List<Double>, Double>();
+        Map<List<Double>, List<Double>> data = new HashMap<List<Double>, List<Double>>();
         File file = new File(filename);
         BufferedReader br;
         br = new BufferedReader(new FileReader(file));
@@ -96,7 +96,8 @@ public class RBFNNDriver {
             List<Double> input = new ArrayList<>();
             int i = 1;
             // int i = 0; String moleculeName = line[i++];
-            double output = Double.parseDouble(line[i++]);
+            List<Double> output = new ArrayList<>();
+            output.add(Double.parseDouble(line[i++]));
             for (int j = 0; j < numInputNeurons; j++)
                 input.add(Double.parseDouble(line[i++]));
 
@@ -142,7 +143,7 @@ public class RBFNNDriver {
      * @throws IOException
      */
     public static void run(String[] parameters, List<List<Double>> centreVectors,
-            Map<List<Double>, Double> trainingData, Map<List<Double>, Double> testData) throws IOException {
+            Map<List<Double>, List<Double>> trainingData, Map<List<Double>, List<Double>> testData) throws IOException {
 
         RBFNN nn = new RBFNN(Integer.parseInt(parameters[0]), Integer.parseInt(parameters[1]),
                 Integer.parseInt(parameters[2]), Double.parseDouble(parameters[3]), Double.parseDouble(parameters[4]),
@@ -192,7 +193,7 @@ public class RBFNNDriver {
             System.out.println("Error: Enter the path to the parameters.txt as an argument to the program.");
             return;
         }
-        Map<List<Double>, Double> trainingData, testData;
+        Map<List<Double>, List<Double>> trainingData, testData;
         List<List<Double>> centreVectors;
         String[] parameters;
         try {
