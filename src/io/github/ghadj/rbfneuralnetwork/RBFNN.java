@@ -76,8 +76,15 @@ public class RBFNN {
             b = b + learningRateWeight * errors.get(bias.indexOf(b));
     }
 
-    public List<Double> getWeights() {
-        return null;
+    public List<List<Double>> getWeights() {
+        List<List<Double>> weights = new ArrayList<>();
+        for (int i = 0; i < numOutputNeurons; i++) {
+            List<Double> w = new ArrayList<>();
+            for (Centre c : centres)
+                w.add(c.getWeights().get(i));
+            weights.add(w);
+        }
+        return weights;
     }
 
     /**
