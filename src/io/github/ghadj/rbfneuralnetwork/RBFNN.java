@@ -5,7 +5,6 @@ import java.util.*;
 public class RBFNN {
     private double biasWeight;
     private List<Centre> centres;
-    private List<Double> centresWeights;
     private List<Double> trainErrorList = new ArrayList<Double>();
     private List<Double> testErrorList = new ArrayList<Double>();
 
@@ -23,7 +22,7 @@ public class RBFNN {
     }
 
     public List<Double> getWeights() {
-        return centresWeights;
+        return null;
     }
 
     /**
