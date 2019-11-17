@@ -13,7 +13,7 @@ import java.util.Random;
 public class Centre {
     private List<Double> coordinates;
     private List<Double> weights = new ArrayList<>();
-    private double output; // gaussian function result
+    private double output; // gaussian function result of last epoch
     private double sigma; // standard deviation
 
     /**

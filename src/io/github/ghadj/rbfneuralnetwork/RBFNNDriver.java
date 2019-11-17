@@ -39,7 +39,7 @@ import java.util.Map;
  * io.github.ghadj.rbfneuralnetwork.RBFNNDriver <path to parameters.txt>
  * 
  * @author Georgios Hadjiantonis
- * @since 16-11-2019
+ * @since 17-11-2019
  */
 public class RBFNNDriver {
     private static final String errorFilename = "errors.txt";
