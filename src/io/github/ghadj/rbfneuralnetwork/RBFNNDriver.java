@@ -58,7 +58,7 @@ public class RBFNNDriver {
             throws FileNotFoundException, IOException, InvalidParameterException {
         File file = new File(filename);
         BufferedReader br;
-        String[] parameters = new String[7];
+        String[] parameters = new String[9];
         int i = 0;
 
         br = new BufferedReader(new FileReader(file));
@@ -203,7 +203,9 @@ public class RBFNNDriver {
     public static void writeWeights(List<List<Double>> weights, String filename) throws IOException {
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "utf-8"));
         StringBuilder str = new StringBuilder();
-
+        for(int i = 0; i < weights.size(); i++) {
+            str.append(weights.get(i).toString());
+        }
         writer.write(str.toString());
         writer.close();
     }

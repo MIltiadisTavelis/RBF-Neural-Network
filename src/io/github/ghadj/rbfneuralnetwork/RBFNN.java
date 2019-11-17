@@ -138,20 +138,18 @@ public class RBFNN {
     }
 
     /**
-     * Returns a list containing the mean of the squared error per epoch, during
-     * training.
+     * Returns a list containing the total error per epoch, during training.
      * 
-     * @return list containing the mean of the squared error per epoch.
+     * @return list containing the total error per epoch.
      */
     public List<Double> getTrainErrorList() {
         return trainErrorList;
     }
 
     /**
-     * Returns a list containing the mean of the squared error per epoch, during
-     * test.
+     * Returns a list containing the total error per epoch, during test.
      * 
-     * @return list containing the mean of the squared error per epoch.
+     * @return list containing the total error per epoch.
      */
     public List<Double> getTestErrorList() {
         return testErrorList;
