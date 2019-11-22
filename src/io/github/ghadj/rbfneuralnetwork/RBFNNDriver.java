@@ -32,11 +32,11 @@ import java.util.Map;
  * trainFile ../Parameters/training.csv 
  * testFile ../Parameters/test.csv
  * 
- * Compile from RBF-Neural-Network/ directory javac -d ./bin
- * ./src/io/github/ghadj/rbfneuralnetwork/*.java
+ * Compile from RBF-Neural-Network/ directory 
+ * javac -d ./bin ./src/io/github/ghadj/rbfneuralnetwork/*.java
  * 
- * Run from RBF-Neural-Network/ directory java -cp ./bin
- * io.github.ghadj.rbfneuralnetwork.RBFNNDriver <path to parameters.txt>
+ * Run from RBF-Neural-Network/ directory 
+ * java -cp ./bin io.github.ghadj.rbfneuralnetwork.RBFNNDriver <path to parameters.txt>
  * 
  * @author Georgios Hadjiantonis
  * @since 17-11-2019
@@ -204,7 +204,7 @@ public class RBFNNDriver {
         Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), "utf-8"));
         StringBuilder str = new StringBuilder();
         for(int i = 0; i < weights.size(); i++) {
-            str.append(weights.get(i).toString());
+            str.append(weights.get(i).toString() + "\n");
         }
         writer.write(str.toString());
         writer.close();

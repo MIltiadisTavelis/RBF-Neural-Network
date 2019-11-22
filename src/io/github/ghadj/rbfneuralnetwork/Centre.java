@@ -69,9 +69,9 @@ public class Centre {
         double sum = 0.0;
         for (int i = 0; i < errors.size() && i < weights.size(); i++)
             sum += errors.get(i) * weights.get(i) * output;
-        for (Double c : this.coordinates) {
-            c = c + learningRate * sum * (x.get(coordinates.indexOf(c)) - c) / Math.pow(sigma, 2);
-        }
+        for (int c = 0; c < coordinates.size(); c++)
+            this.coordinates.set(c,
+                    coordinates.get(c) + learningRate * sum * (x.get(c) - coordinates.get(c)) / Math.pow(sigma, 2));
     }
 
     /**
@@ -96,8 +96,8 @@ public class Centre {
      * @param learningRate learning rate.
      */
     public void updateWeights(List<Double> errors, double learningRate) {
-        for (Double w : this.weights)
-            w = w + learningRate * errors.get(this.weights.indexOf(w)) * output;
+        for (int w = 0; w < weights.size(); w++)
+            weights.set(w, weights.get(w) + learningRate * errors.get(w) * output);
     }
 
     /**
