@@ -17,9 +17,9 @@ import java.util.Map;
 
 /**
  * Driver of the RBF neural network. Takes as input from the arguments the path
- * to the file, containing the parameters of the neural network. Traings the
+ * to the file, containing the parameters of the neural network. Trains the
  * neural network based on the given parameters and exports the error per epoch
- * and clustering.
+ * and weights of the hidden neurons.
  * 
  * Assume that the parameter file has the following format:
  * numHiddenLayerNeurons (???)
